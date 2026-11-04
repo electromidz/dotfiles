@@ -1,0 +1,10 @@
+#!/bin/sh
+# Date and time, e.g. "󰅐 Tuesday  3 November  01:21 PM".
+# Left click: show this month's calendar.
+
+case $BLOCK_BUTTON in
+1) notify-send -t 15000 "$(date '+%B %Y')" "$(cal | tail -n +2)" ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+
+date "+󰅐 %A %e %B  %I:%M %p"

@@ -1,0 +1,16 @@
+# Optional apps. install.sh asks before installing these.
+firefox
+chromium
+kitty
+mpv
+vlc
+zathura
+zathura-pdf-mupdf
+nautilus
+telegram-desktop
+discord
+yt-dlp
+docker
+docker-compose
+github-cli
+openssh

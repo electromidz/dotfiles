@@ -1,0 +1,80 @@
+# Dunst notification style. pywal template: wal fills in the {colorN}
+# values and writes ~/.cache/wal/dunstrc, which ~/.config/dunst/dunstrc
+# links to. Edit THIS file, not the generated one.
+
+[global]
+    # ── Placement ──────────────────────────────────────────
+    monitor = 0
+    follow = keyboard           # show on the monitor you are working on
+    origin = top-right
+    offset = (14, 38)           # just below the dwm bar
+    width = (300, 420)          # grows with content, up to 420px
+    height = (0, 320)
+    notification_limit = 5
+    indicate_hidden = yes
+
+    # ── Look ───────────────────────────────────────────────
+    font = JetBrainsMono Nerd Font 10
+    line_height = 3
+    padding = 12
+    horizontal_padding = 14
+    text_icon_padding = 14
+    frame_width = 2
+    corner_radius = 10
+    gap_size = 8                # space between stacked notifications
+    separator_height = 0
+    separator_color = frame
+    transparency = 0
+    progress_bar = true
+    progress_bar_height = 8
+    progress_bar_frame_width = 0
+    progress_bar_corner_radius = 4
+    highlight = "{color4}"
+
+    # ── Text ───────────────────────────────────────────────
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    ellipsize = middle
+    ignore_newline = no
+    word_wrap = yes
+    show_age_threshold = 60     # "(2m)" on notifications older than a minute
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    # ── Icons ──────────────────────────────────────────────
+    icon_theme = Papirus-Dark
+    enable_recursive_icon_lookup = true
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 48
+
+    # ── History & mouse ────────────────────────────────────
+    sticky_history = yes
+    history_length = 30
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
+    dmenu = /usr/local/bin/dmenu -p dunst:
+    browser = /usr/bin/xdg-open
+
+[urgency_low]
+    background = "{background}ee"
+    foreground = "{foreground}"
+    frame_color = "{color8}"
+    timeout = 4
+
+[urgency_normal]
+    background = "{background}ee"
+    foreground = "{foreground}"
+    frame_color = "{color4}"
+    timeout = 8
+
+[urgency_critical]
+    background = "{background}ee"
+    foreground = "{foreground}"
+    frame_color = "#bf616a"
+    highlight = "#bf616a"
+    timeout = 0                 # stays until you close it

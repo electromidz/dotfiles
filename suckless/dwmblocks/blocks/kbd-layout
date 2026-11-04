@@ -1,0 +1,16 @@
+#!/bin/sh
+# Active keyboard layout from `setxkbmap -layout us,ir`, e.g. "󰌌 EN".
+# Left click: switch layout (same as Win+Space).
+# xkb-group is a tiny helper built from xkb-group.c in this folder.
+
+dir=$(dirname "$0")
+layouts="EN FA"   # same order as setxkbmap -layout us,ir
+
+case $BLOCK_BUTTON in
+1) "$dir/xkb-group" next >/dev/null ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+
+group=$("$dir/xkb-group" 2>/dev/null) || exit 0
+name=$(echo "$layouts" | cut -d' ' -f$((group + 1)))
+echo "󰌌 ${name:-?}"

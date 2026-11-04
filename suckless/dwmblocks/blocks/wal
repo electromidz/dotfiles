@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo "start"
+cd "$HOME/suckless/dwmblocks"
+make clean install PREFIX="$HOME/.local"
+
+pkill -x dwmblocks
+while pgrep -x dwmblocks >/dev/null; do sleep 0.1; done
+dwmblocks &
+
+dir="$HOME/Pictures/Backgrounds/"
+
+shopt -s nullglob nocaseglob
+pics=("$dir"/*.{png,jpg,jpeg,gif,bmp,webp,tif,tiff,pnm,ppm,pgm,pbm,jxl,avif})
+shopt -u nullglob nocaseglob
+
+count=${#pics[@]}
+
+if [ "$count" -eq 0 ]; then
+  echo "no images in $dir" >&2
+  exit 1
+fi
+
+index=$((RANDOM % count))
+pic="${pics[index]}"
+
+echo "$pic"
+
+wal -i "$pic" -n &&
+  xrdb -merge "$HOME/.cache/wal/xrdb_extra" &&
+  xwallpaper --zoom "$pic" &&
+  xdotool key "Super+ctrl+backslash"
+
+pgrep -x picom >/dev/null || picom -b
+
+# Restart dunst so notifications use the new colours (~/.config/wal/templates/dunstrc)
+pkill -x dunst
+while pgrep -x dunst >/dev/null; do sleep 0.1; done
+setsid -f dunst >/dev/null 2>&1

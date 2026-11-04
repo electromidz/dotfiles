@@ -1,0 +1,3 @@
+#!/bin/bash
+# Save as ~/.local/bin/wal-librewolf
+cp ~/.cache/wal/template/userChrome.css ~/.librewolf/*.default-default/chrome/userChrome.css

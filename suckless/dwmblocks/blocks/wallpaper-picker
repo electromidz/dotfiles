@@ -1,0 +1,15 @@
+#!/bin/bash
+WALL_DIR="$HOME/Pictures/Backgrounds/"
+selected=$(find "$WALL_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%p\n" | dmenu -i -l 10 -p "Wallpaper:")
+
+if [ -n "$selected" ]; then
+  wal -i "$selected" -n &&
+    xrdb -merge "$HOME/.cache/wal/xrdb_extra" &&
+    xwallpaper --zoom "$selected" &&
+    xdotool key "Super+ctrl+backslash"
+
+  # Restart dunst so notifications use the new colours
+  pkill -x dunst
+  while pgrep -x dunst >/dev/null; do sleep 0.1; done
+  setsid -f dunst >/dev/null 2>&1
+fi

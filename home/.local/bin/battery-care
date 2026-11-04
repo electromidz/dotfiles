@@ -1,0 +1,51 @@
+#!/bin/sh
+# Battery care: keep the battery between 75% and 80% while plugged in.
+# usage: battery-care [toggle|on|off|status]   (default: toggle)
+BAT=/sys/class/power_supply/BAT0
+export DISPLAY="${DISPLAY:-:0}"
+
+is_on() { [ "$(cat "$BAT/charge_control_end_threshold")" -lt 100 ]; }
+
+info() {
+  cap=$(cat "$BAT/capacity")
+  status=$(cat "$BAT/status")
+  health=$(( $(cat "$BAT/energy_full") * 100 / $(cat "$BAT/energy_full_design") ))
+  echo "Battery ${cap}% (${status}) · health ${health}%"
+}
+
+notify() { notify-send -a "Battery care" -i battery "$1" "$2"; }
+
+set_mode() {
+  if ! sudo -n /usr/local/bin/battery-care-set "$1" 2>/dev/null; then
+    notify "Battery care failed" "Helper not installed. Run ~/.local/share/battery-care/install.sh"
+    exit 1
+  fi
+  # The ThinkPad ignores "stop at 100%" while start is still 75%, so turning
+  # off needs a second pass. Check the result and retry once.
+  [ "$1" = on ] && want=80 || want=100
+  if [ "$(cat "$BAT/charge_control_end_threshold")" != "$want" ]; then
+    sudo -n /usr/local/bin/battery-care-set "$1" 2>/dev/null
+  fi
+  if [ "$(cat "$BAT/charge_control_end_threshold")" != "$want" ]; then
+    notify "Battery care failed" "The laptop did not accept the new charge limit."
+    exit 1
+  fi
+  # Refresh the dwmblocks battery block (signal 10) so the shield icon updates now
+  pkill -RTMIN+10 dwmblocks 2>/dev/null
+  if [ "$1" = on ]; then
+    notify "Battery care ON" "Charging stops at 80% (resumes below 75%)
+$(info)"
+  else
+    notify "Battery care OFF" "Charging to 100%
+$(info)"
+  fi
+}
+
+case "${1:-toggle}" in
+  on|off) set_mode "$1" ;;
+  toggle) if is_on; then set_mode off; else set_mode on; fi ;;
+  status)
+    if is_on; then echo "Battery care: ON (75-80%)"; else echo "Battery care: OFF (charge to 100%)"; fi
+    info ;;
+  *) echo "usage: battery-care [toggle|on|off|status]" >&2; exit 2 ;;
+esac

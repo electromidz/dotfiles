@@ -1,0 +1,74 @@
+# Needed for the dwm desktop. Installed with pacman.
+
+# build tools
+base-devel
+git
+
+# X11 + libraries dwm / st / dmenu are built against
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-xrdb
+xorg-xset
+xorg-setxkbmap
+libx11
+libxft
+libxinerama
+harfbuzz
+fontconfig
+
+# desktop pieces
+picom
+dunst
+libnotify
+slock
+xss-lock
+xwallpaper
+xdotool
+xclip
+cliphist
+
+# audio
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+alsa-utils
+playerctl
+
+# network / bluetooth / power
+networkmanager
+iw
+bluez
+bluez-utils
+brightnessctl
+power-profiles-daemon
+upower
+
+# used by status bar scripts
+lm_sensors
+curl
+bc
+btop
+
+# shell + terminal tools
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-history-substring-search
+starship
+tmux
+neovim
+fzf
+ripgrep
+fd
+bat
+eza
+zoxide
+yazi
+lazygit
+fastfetch
+xdg-user-dirs
+unzip
+wget

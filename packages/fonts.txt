@@ -1,0 +1,10 @@
+# Fonts used by dwm, st, dmenu and the status bar icons.
+ttf-jetbrains-mono-nerd
+ttf-hack-nerd
+ttf-firacode-nerd
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-dejavu
+inter-font
+papirus-icon-theme

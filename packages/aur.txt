@@ -1,0 +1,4 @@
+# Installed with yay (AUR).
+python-pywal16
+wiremix-git
+ttf-maple-mono-nf

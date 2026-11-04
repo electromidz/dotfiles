@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# ── Click actions ──────────────────────────────────────────
+case "${BLOCK_BUTTON:-0}" in
+1) setsid -f "${TERMINAL:-st}" -e btop ;;
+3) notify-send "󰖩 Network" "↓ Download traffic   ↑ Upload traffic" ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+
+# ── Detect active default interface ────────────────────────
+IFACE=$(ip -o route show default | awk 'NR == 1 {print $5}')
+
+if [[ -z "$IFACE" || ! -r "/sys/class/net/$IFACE/statistics/rx_bytes" ]]; then
+  printf '↓ ▁ 0B/s  ↑ ▁ 0B/s\n'
+  exit 0
+fi
+
+RX_FILE="/sys/class/net/$IFACE/statistics/rx_bytes"
+TX_FILE="/sys/class/net/$IFACE/statistics/tx_bytes"
+CACHE="/tmp/dwmblocks-net-${UID}-${IFACE}"
+
+RX=$(<"$RX_FILE")
+TX=$(<"$TX_FILE")
+NOW=$(date +%s%N)
+
+# ── Read previous counters ─────────────────────────────────
+if [[ -r "$CACHE" ]]; then
+  read -r OLD_RX OLD_TX OLD_TIME <"$CACHE"
+else
+  OLD_RX=$RX
+  OLD_TX=$TX
+  OLD_TIME=$NOW
+fi
+
+printf '%s %s %s\n' "$RX" "$TX" "$NOW" >"$CACHE"
+
+# ── Calculate bytes per second ─────────────────────────────
+read -r DOWN UP < <(
+  awk -v rx="$RX" -v orx="$OLD_RX" \
+    -v tx="$TX" -v otx="$OLD_TX" \
+    -v now="$NOW" -v old="$OLD_TIME" '
+        BEGIN {
+            elapsed = (now - old) / 1000000000
+            if (elapsed <= 0) elapsed = 1
+
+            down = (rx - orx) / elapsed
+            up   = (tx - otx) / elapsed
+
+            if (down < 0) down = 0
+            if (up < 0) up = 0
+
+            printf "%.0f %.0f\n", down, up
+        }'
+)
+
+# ── Single-character vertical equalizer meter ──────────────
+meter() {
+  awk -v n="$1" 'BEGIN {
+        if      (n < 1024)       print "▁"
+        else if (n < 10*1024)    print "▂"
+        else if (n < 50*1024)    print "▃"
+        else if (n < 100*1024)   print "▄"
+        else if (n < 500*1024)   print "▅"
+        else if (n < 1024*1024)  print "▆"
+        else if (n < 5*1024*1024) print "▇"
+        else                     print "█"
+    }'
+}
+
+# ── Compact speed formatting ───────────────────────────────
+speed() {
+  awk -v n="$1" 'BEGIN {
+        if      (n >= 1048576) printf "%.1fM/s", n/1048576
+        else if (n >= 1024)    printf "%.1fK/s", n/1024
+        else                   printf "%.0fB/s", n
+    }'
+}
+
+# ── Final status line ──────────────────────────────────────
+printf '↓ %s %s  ↑ %s %s\n' \
+  "$(meter "$DOWN")" "$(speed "$DOWN")" \
+  "$(meter "$UP")" "$(speed "$UP")"

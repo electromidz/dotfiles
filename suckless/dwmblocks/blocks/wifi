@@ -1,0 +1,33 @@
+#!/bin/sh
+# Network connection, e.g. "󰤨 Dotin" (Wi-Fi with signal bars) or "󰈀 LAN".
+# Left click: network manager (nmtui). Right click: connection details.
+
+WIFI=wlan0
+
+case $BLOCK_BUTTON in
+1) setsid -f "${TERMINAL:-st}" -e nmtui ;;
+3) notify-send "󰖩 Network" "$(nmcli -t -f DEVICE,STATE,CONNECTION device | grep -v -e '^lo' -e '^docker' -e '^br-' -e '^veth' | tr ':' ' ')
+IP: $(ip -4 -o route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<NF;i++) if($i=="src") print $(i+1)}')" ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+
+# Wired connection takes priority if it is up
+for dev in /sys/class/net/en*; do
+  [ "$(cat "$dev/operstate" 2>/dev/null)" = up ] && { echo "󰈀 LAN"; exit 0; }
+done
+
+link=$(iw dev "$WIFI" link 2>/dev/null)
+ssid=$(echo "$link" | sed -n 's/^\s*SSID: //p')
+if [ -z "$ssid" ]; then
+  echo "󰤮 off"   # md-wifi_strength_off_outline
+  exit 0
+fi
+
+# Signal in dBm -> bars
+dbm=$(echo "$link" | awk '/signal:/ {print $2}')
+if   [ "$dbm" -ge -55 ]; then icon="󰤨"   # md-wifi_strength_4
+elif [ "$dbm" -ge -67 ]; then icon="󰤥"   # md-wifi_strength_3
+elif [ "$dbm" -ge -75 ]; then icon="󰤢"   # md-wifi_strength_2
+else icon="󰤟"; fi                        # md-wifi_strength_1
+
+echo "$icon $ssid"

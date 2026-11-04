@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Find all batteries
+batteries=$(find /sys/class/power_supply -name "BAT*")
+
+if [ -z "$batteries" ]; then
+    echo "🔌AC"
+    exit 0
+fi
+
+total_capacity=0
+battery_count=0
+status="Unknown"
+
+# Calculate average of all batteries
+for battery in $batteries; do
+    capacity=$(cat "$battery/capacity" 2>/dev/null)
+    bat_status=$(cat "$battery/status" 2>/dev/null)
+    
+    if [ -n "$capacity" ]; then
+        total_capacity=$((total_capacity + capacity))
+        battery_count=$((battery_count + 1))
+        status="$bat_status"  # Use status from last battery
+    fi
+done
+
+if [ $battery_count -gt 0 ]; then
+    avg_capacity=$((total_capacity / battery_count))
+    
+    # Choose icon
+    # Nerd Font icons (one colour, like the other blocks)
+    levels=(󰂃 󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹)  # alert, 10% .. 90%, full
+    case "$status" in
+        Charging) icon="󰂄 " ;;                       # md-battery_charging
+        "Not charging"|Full) icon="󰚥 " ;;            # md-power_plug: plugged in, holding
+        *) icon="${levels[avg_capacity / 10]} " ;;  # on battery: shows charge level
+    esac
+    
+    # Battery care (charge limit below 100%): show a shield (Nerd Font md-shield_check)
+    care=""
+    end=$(cat /sys/class/power_supply/BAT0/charge_control_end_threshold 2>/dev/null)
+    [ -n "$end" ] && [ "$end" -lt 100 ] && care=" 󰕥"
+
+    echo "${icon}${avg_capacity}%${care}"
+else
+    echo "🔌AC"
+fi

@@ -1,0 +1,37 @@
+:root {
+   /* Pywal generated colors */
+  --mff-bg: {background};
+  --mff-bg-bi: linear-gradient(135deg, {color1} 0%, {color5} 50%, {color4} 100%);
+  --mff-icon-color: {foreground};
+  --mff-nav-toolbar-padding: 8px;
+  --mff-sidebar-bg: {background};
+  --mff-sidebar-color: {foreground};
+  --mff-tab-border-radius: 0px;
+  --mff-tab-color: {foreground};
+  --mff-tab-font-family: system-ui;
+  --mff-tab-font-size: 11pt;
+  --mff-tab-font-weight: 400;
+  --mff-tab-height: 32px;
+  --mff-tab-pinned-bg: {color6};
+  --mff-tab-soundplaying-bg: {color8};
+  --mff-urlbar-color: {color4};
+  --mff-urlbar-focused-color: {foreground};
+  --mff-urlbar-font-family: system-ui;
+  --mff-urlbar-font-size: 12pt;
+  --mff-urlbar-font-weight: 500;
+  --mff-urlbar-results-color: {foreground};
+  --mff-urlbar-results-font-family: system-ui;
+  --mff-urlbar-results-font-size: 12pt;
+  --mff-urlbar-results-font-weight: 700;
+  --mff-urlbar-results-url-color: {color4};
+  --mff-tab-selected-bg: linear-gradient(-45deg, {color4} 0%, {color5} 20%, {foreground} 40%, {color5} 60%, {color4} 100%);
+
+  /* Overriden Firefox variables*/
+  --autocomplete-popup-background: {background} !important;
+  --default-arrowpanel-background: {background} !important;
+  --default-arrowpanel-color: {foreground} !important;
+  --lwt-toolbarbutton-icon-fill: {foreground} !important;
+  --panel-disabled-color: {foreground}80;
+  --toolbar-bgcolor: {background} !important;
+  --urlbar-separator-color: transparent !important;
+}

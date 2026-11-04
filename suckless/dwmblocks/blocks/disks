@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Disk usage. Left click: next disk, right click: previous disk,
+# middle click: switch between "% used" and "space free".
+
+DISKS=("/" "/home")
+ICONS=("󰋊 " "󰆼 ")   # root, home
+
+STATE="/tmp/dwmblocks-disks-${UID}"
+read -r INDEX FORMAT <"$STATE" 2>/dev/null
+INDEX=${INDEX:-0}
+FORMAT=${FORMAT:-0}
+N=${#DISKS[@]}
+[ "$INDEX" -ge "$N" ] && INDEX=0
+
+# Handle clicks first so the bar shows the new choice right away
+case $BLOCK_BUTTON in
+1) INDEX=$(((INDEX + 1) % N)) ;;
+3) INDEX=$(((INDEX + N - 1) % N)) ;;
+2) FORMAT=$(((FORMAT + 1) % 2)) ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+echo "$INDEX $FORMAT" >"$STATE"
+
+read -r PERCENT SPACE < <(df -h --output=pcent,avail "${DISKS[$INDEX]}" | awk 'NR==2 {print $1, $2}')
+[ "$FORMAT" -eq 0 ] && INFO="$PERCENT" || INFO="$SPACE"
+
+echo "${ICONS[$INDEX]}$INFO"

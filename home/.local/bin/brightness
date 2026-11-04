@@ -1,0 +1,9 @@
+#!/bin/sh
+# Usage: brightness up|down  — change screen brightness and show it in dunst
+case "$1" in
+	up)   brightnessctl -q set 5%+ ;;
+	down) brightnessctl -q -n5% set 5%- ;;
+esac
+pct=$(( $(brightnessctl get) * 100 / $(brightnessctl max) ))
+dunstify -a brightness -u low -t 1500 -h string:x-dunst-stack-tag:brightness \
+	-h int:value:"$pct" "Brightness: ${pct}%"

@@ -1,0 +1,81 @@
+#!/bin/bash
+# Bitcoin price in thousands of USD. Notifies once when the price crosses
+# above HIGH or below LOW (not every refresh).
+
+API_URL="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+ICON="󰠓 "     # Nerd Font md-bitcoin
+HIGH=125      # thousand USD
+LOW=85
+STATE="/tmp/dwmblocks-btc-${UID}"
+
+# Left click: notification with BTC, ETH, SOL and APT prices and 24h change
+show_prices() {
+  resp=$(curl -s --max-time 5 -w '\n%{http_code}' "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,aptos&vs_currencies=usd&include_24hr_change=true")
+  code=$(echo "$resp" | tail -n1)
+  json=$(echo "$resp" | sed '$d')
+  # One notification that replaces itself on repeated clicks
+  notify() { notify-send -i none -h string:x-dunst-stack-tag:crypto-prices "$@"; }
+
+  if [ "$code" = 429 ]; then
+    notify "󰄪  Crypto prices" "Too many requests to CoinGecko. Try again in a minute."
+    return
+  elif [ "$code" != 200 ] || [ -z "$json" ]; then
+    notify "󰄪  Crypto prices" "Could not reach CoinGecko"
+    return
+  fi
+
+  # Pango markup: dunst shows bold, colours and a monospace column layout
+  body=""
+  for coin in "bitcoin BTC 󰠓" "ethereum ETH 󰡪" "solana SOL 󰰢" "aptos APT 󰯬"; do
+    set -- $coin
+    # pull {"usd":N,"usd_24h_change":M} for this coin out of the JSON
+    obj=$(echo "$json" | grep -o "\"$1\":{[^}]*}")
+    usd=$(echo "$obj" | grep -o '"usd":[0-9.eE+-]*' | cut -d: -f2)
+    chg=$(echo "$obj" | grep -o '"usd_24h_change":[0-9.eE+-]*' | cut -d: -f2)
+    line=$(awk -v n="$2" -v icon="$3" -v p="$usd" -v c="$chg" 'BEGIN {
+        fmt = (p >= 100) ? "%.0f" : (p >= 1) ? "%.2f" : "%.4f"
+        price = sprintf(fmt, p)
+        # thousands separators
+        while (price ~ /^[0-9]{4}/) sub(/[0-9]{3}([,.]|$)/, ",&", price)
+        sub(/^,/, "", price); gsub(/,,/, ",", price)
+        # green trending-up / red trending-down (same colours as systemstat)
+        if (c >= 0) { col = "#a3be8c"; trend = "󰔵"; sign = "+" }
+        else        { col = "#bf616a"; trend = "󰔳"; sign = "" }
+        printf "<b>%s %-3s</b>  %10s   <span foreground=\"%s\">%s %s%.2f%%</span>", \
+            icon, n, "$" price, col, trend, sign, c
+    }')
+    body="${body}${line}
+"
+  done
+  body="${body}
+<span size=\"small\" foreground=\"#888888\">updated $(date +%H:%M) · CoinGecko</span>"
+  notify -t 15000 "󰄪  Crypto prices · 24h" "$body"
+}
+
+case $BLOCK_BUTTON in
+1) show_prices ;;
+3) xdg-open "https://www.coingecko.com/en/coins/bitcoin" >/dev/null 2>&1 & ;;
+6) setsid -f "${TERMINAL:-st}" -e "${EDITOR:-nvim}" "$0" ;;
+esac
+
+price=$(curl -sf --max-time 5 "$API_URL" | grep -o '"usd":[0-9.]*' | cut -d: -f2)
+
+if [ -z "$price" ]; then
+  echo "${ICON}--"   # offline or API error
+  exit 0
+fi
+
+k=$(awk -v p="$price" 'BEGIN {printf "%.2f", p/1000}')
+
+# high / low / normal, compared with awk (no bc needed)
+level=$(awk -v k="$k" -v h="$HIGH" -v l="$LOW" 'BEGIN {print (k > h) ? "high" : (k < l) ? "low" : "normal"}')
+last=$(cat "$STATE" 2>/dev/null)
+if [ "$level" != "$last" ]; then
+  echo "$level" >"$STATE"
+  case $level in
+  high) notify-send "󰠓 Bitcoin high" "🚀 \$${k}k (above \$${HIGH}k)" ;;
+  low) notify-send "󰠓 Bitcoin low" "\$${k}k (below \$${LOW}k)" ;;
+  esac
+fi
+
+echo "${ICON}${k}"
