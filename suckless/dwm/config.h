@@ -178,7 +178,7 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,			XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,				XK_space,  togglefloating, {0} },
 	{ MODKEY,						XK_space,  zoom,           {0} },
-	{ MODKEY|ControlMask,           XK_space,  focusmaster,    {0} },
+	{ MODKEY|ControlMask,           XK_m,      focusmaster,    {0} },
 	{ MODKEY|ShiftMask,             XK_s,      togglesticky,   {0} },
 
 
@@ -222,7 +222,7 @@ static const Key keys[] = {
 /* toggle statusbar pieces individually */
 	{ MODKEY|ControlMask,			XK_t,      togglebartitle, {0} },
 	{ MODKEY|ControlMask,			XK_s,      togglebarstatus,{0} },
-	{ MODKEY|ControlMask,			XK_t,      togglebartags,  {0} },
+	{ MODKEY|ControlMask,			XK_g,      togglebartags,  {0} },
     { MODKEY|ControlMask,			XK_e,      togglebarcolor, {0} }, /* swaps fg/bg for tag+win */
 	{ MODKEY|ControlMask,			XK_r,      togglebarlt,    {0} },
 	{ MODKEY|ControlMask,			XK_f,      togglebarfloat, {0} },
@@ -231,7 +231,7 @@ static const Key keys[] = {
 /* application bindings */
 	{ MODKEY,			XK_m,          spawn,      {.v = (const char*[]){ "st", "-e", "termusic", NULL } } },
 	{ MODKEY,			XK_w,          spawn,      {.v = (const char*[]){ BROWSER, NULL } } },
-	{ MODKEY,			XK_f,          spawn,      {.v = (const char*[]){ "st", "-e", "fff", NULL } } },
+	{ MODKEY,			XK_e,          spawn,      {.v = (const char*[]){ "st", "-e", "fff", NULL } } },
 	{ MODKEY,			XK_n,          spawn,      {.v = (const char*[]){ "st", "-e", "nvim", NULL } } },
 	{ MODKEY|ShiftMask,	XK_h,          spawn,      {.v = (const char*[]){ "st", "-e", "htop", NULL } } },
 	{ MODKEY,			XK_p,          spawn,      {.v = (const char*[]){ "darktable", NULL } } },

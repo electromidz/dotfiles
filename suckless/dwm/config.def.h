@@ -22,7 +22,7 @@ dwm-vanitygaps-6.2.diff ----- gaps are functional: your eye is less inclined to 
 dwm-xrdb-6.4.diff - xresource database colors
 */
 
-#include "~/.cache/wal/colors-wal-dwm.h"
+#include "/home/o/.cache/wal/colors-wal-dwm.h"
 
 
 /* appearance */
@@ -87,7 +87,7 @@ static const Rule rules[] = {
 };
 
 #include "vanitygaps.c"
-#inclide "~/.cache/wal/colors-wal-dwm.h"
+#inclide "/home/o/.cache/wal/colors-wal-dwm.h"
 
 
 /* layout(s) */

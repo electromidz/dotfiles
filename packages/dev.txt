@@ -1,0 +1,11 @@
+# Developer tools. Installed with pacman. (Node comes from nvm, see install.sh)
+docker
+docker-compose
+docker-buildx
+github-cli
+openssh
+go
+rustup
+mise
+python-pip
+python-pipx

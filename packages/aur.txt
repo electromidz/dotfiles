@@ -1,4 +1,5 @@
-# Installed with yay (AUR).
+# Needed for the desktop. Installed with yay (AUR).
 python-pywal16
 wiremix-git
 ttf-maple-mono-nf
+otf-space-grotesk

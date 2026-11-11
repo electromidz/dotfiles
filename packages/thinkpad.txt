@@ -1,0 +1,12 @@
+# ThinkPad X1 Carbon (Intel) hardware support. Installed with pacman.
+intel-ucode
+linux-firmware
+sof-firmware
+mesa
+mesa-utils
+vulkan-intel
+intel-media-driver
+libva-intel-driver
+vpl-gpu-rt
+zram-generator
+fwupd

@@ -1,0 +1,4 @@
+# Desktop apps from the AUR. Installed with yay.
+localsend-bin
+zennotes-bin
+calcure

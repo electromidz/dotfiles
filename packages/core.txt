@@ -39,6 +39,7 @@ playerctl
 
 # network / bluetooth / power
 networkmanager
+iwd
 iw
 bluez
 bluez-utils
@@ -70,5 +71,10 @@ yazi
 lazygit
 fastfetch
 xdg-user-dirs
+xdg-desktop-portal-gtk
+gnome-keyring
+htop
+tree-sitter-cli
+man-db
 unzip
 wget

@@ -1,16 +1,14 @@
-# Optional apps. install.sh asks before installing these.
+# Desktop apps. Installed with pacman.
 firefox
 chromium
 kitty
 mpv
+mpv-mpris
 vlc
+vlc-plugin-ffmpeg
 zathura
 zathura-pdf-mupdf
 nautilus
 telegram-desktop
 discord
 yt-dlp
-docker
-docker-compose
-github-cli
-openssh

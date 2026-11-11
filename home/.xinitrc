@@ -12,6 +12,16 @@ sleep 0.5
 #setxkbmap -layout us,ir -option grp:alt_shift_toggle
 setxkbmap -layout us,ir -option grp:win_space_toggle
 
+# Mirror the laptop screen onto the HDMI monitor when it's plugged in
+# (Dell at 2560x1440; the 1080p laptop screen shrinks the same picture to fit)
+if xrandr | grep -q '^HDMI-1 connected'; then
+    xrandr --output HDMI-1 --mode 2560x1440 --rate 59.95 --pos 0x0 --primary \
+           --output eDP-1 --mode 1920x1080 --rate 60 --scale-from 2560x1440 --same-as HDMI-1
+fi
+
+# Text/UI scale: 96 DPI = 100%. Set here because ~/.Xresources is rewritten by wal.
+echo 'Xft.dpi: 96' | xrdb -merge
+
 # Used by status bar click actions
 export TERMINAL=st
 export EDITOR=nvim
@@ -37,6 +47,10 @@ xss-lock -- slock &
 
 # Start dwmblocks BEFORE exec dwm, otherwise it never runs
 (cd ~/suckless/dwmblocks && exec dwmblocks) &
+
+# Give background services (file picker portal, etc.) access to this X display.
+# Without this, browser "Upload file" dialogs never open.
+dbus-update-activation-environment --systemd DISPLAY XAUTHORITY
 
 # Replace shell with dwm (must be last)
 exec dwm

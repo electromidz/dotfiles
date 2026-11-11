@@ -1,0 +1,21 @@
+#!/bin/sh
+# Root helper: set ThinkPad charge thresholds. Only accepts "on" or "off".
+# Installed to /usr/local/bin/battery-care-set; run via sudo by battery-care.
+set -e
+BAT=/sys/class/power_supply/BAT0
+
+case "$1" in
+  on)
+    # Write stop first so start always stays below stop.
+    echo 80  > "$BAT/charge_control_end_threshold"
+    echo 75  > "$BAT/charge_control_start_threshold"
+    ;;
+  off)
+    echo 100 > "$BAT/charge_control_end_threshold"
+    echo 0   > "$BAT/charge_control_start_threshold"
+    ;;
+  *)
+    echo "usage: battery-care-set on|off" >&2
+    exit 2
+    ;;
+esac
